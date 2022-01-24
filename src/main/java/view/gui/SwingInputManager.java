@@ -3,11 +3,13 @@ package view.gui;
 import model.Currency;
 import model.ExchangeRate;
 import model.Result;
+import org.intellij.lang.annotations.Flow;
 import view.persistence.ExchangeRateLoader;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
+import java.io.IOException;
 import java.util.List;
 import java.util.Vector;
 
@@ -32,20 +34,31 @@ public class SwingInputManager extends JPanel implements InputManager {
         JButton confirm = new JButton("Confirm");
         confirm.addActionListener(onConfirm);
 
-        add(fromSelector = new JComboBox<>(new Vector<>(currencies)));
-        add(toSelector = new JComboBox<>(new Vector<>(currencies)));
+        JPanel tmp = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        tmp.add(new JLabel("From: "));
+        tmp.add(fromSelector = new JComboBox<>(new Vector<>(currencies)));
+        fromSelector.setMaximumRowCount(20);
+        add(tmp);
+
+        tmp = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        tmp.add(new JLabel("To: "));
+        tmp.add(toSelector = new JComboBox<>(new Vector<>(currencies)));
+        toSelector.setMaximumRowCount(20);
+        add(tmp);
+
         add(amountField = new JTextField());
         add(confirm);
     }
 
     public Result buildResult(ExchangeRateLoader erl){
-        ExchangeRate er = erl.loadExchangeRate(
-                            (Currency) fromSelector.getSelectedItem(),
-                            (Currency) toSelector.getSelectedItem()
-                        );
-
+        Result result = null;
         try {
-            return new Result(er, Double.parseDouble(amountField.getText()));
+            ExchangeRate er = erl.loadExchangeRate(
+                    (Currency) fromSelector.getSelectedItem(),
+                    (Currency) toSelector.getSelectedItem()
+            );
+
+            result = new Result(er, Double.parseDouble(amountField.getText()));
         } catch (NumberFormatException exception) {
             JOptionPane.showMessageDialog(
                     this,
@@ -53,8 +66,16 @@ public class SwingInputManager extends JPanel implements InputManager {
                     "Number error",
                     JOptionPane.ERROR_MESSAGE
             );
-
-            return null;
+        } catch (IOException exception) {
+            JOptionPane.showMessageDialog(
+                    this,
+                    "We are sorry! We are having some problems loading currencies at the moment, " +
+                             "please try again later.",
+                    "Loading error",
+                    JOptionPane.ERROR_MESSAGE
+            );
         }
+
+        return result;
     }
 }

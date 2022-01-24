@@ -21,8 +21,14 @@ public class SwingDisplay extends JPanel implements Display {
 
     @Override
     public void show(Result result) {
+        Currency from = result.getExchangeRate().getFrom();
+        String fromAmount = String.format("%.2f", result.getInputAmount());
+        String fromId = from.getSymbol() == null? from.getName() : from.getSymbol().toString();
+
         Currency to = result.getExchangeRate().getTo();
-        String currencyId = to.getSymbol() == null? to.getName() : to.getSymbol().toString();
-        resultDisplay.setText(result.getOutputAmount() + " " + currencyId);
+        String toAmount = String.format("%.2f", result.getOutputAmount());
+        String toId = to.getSymbol() == null? to.getName() : to.getSymbol().toString();
+
+        resultDisplay.setText(fromAmount + " " + fromId + " equals " + toAmount + " " + toId);
     }
 }

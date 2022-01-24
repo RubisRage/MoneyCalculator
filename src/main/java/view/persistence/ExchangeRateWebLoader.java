@@ -16,13 +16,13 @@ public class ExchangeRateWebLoader implements ExchangeRateLoader{
     private final String WEB_URL = "https://cdn.jsdelivr.net/gh/fawazahmed0/currency-api@1/latest/currencies/";
 
     @Override
-    public ExchangeRate loadExchangeRate(Currency from, Currency to) {
+    public ExchangeRate loadExchangeRate(Currency from, Currency to) throws IOException {
         try {
             String url = WEB_URL + from.getName() + "/" + to.getName() + ".json";
             JSONObject json = new JSONObject(IOUtils.toString(new URL(url), StandardCharsets.UTF_8));
 
             return new ExchangeRate(from, to, json.getDouble(to.getName()));
-        } catch (IOException | JSONException e) {
+        } catch (JSONException e) {
             return null;
         }
     }

@@ -1,5 +1,8 @@
 package view.gui;
 
-public interface InputManager {
+import model.Result;
+import view.persistence.ExchangeRateLoader;
 
+public interface InputManager {
+    Result buildResult(ExchangeRateLoader erl);
 }
