@@ -3,7 +3,6 @@ package view.gui;
 import model.Currency;
 import model.ExchangeRate;
 import model.Result;
-import org.intellij.lang.annotations.Flow;
 import view.persistence.ExchangeRateLoader;
 
 import javax.swing.*;
